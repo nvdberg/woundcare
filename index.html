@@ -87,6 +87,40 @@ input[type=text]:focus{outline:none;border-color:#28a745}
 .modal .mf{padding:10px 16px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid #e6ebf2}
 .modal .mf button{font:inherit;font-weight:700;border:0;border-radius:6px;padding:8px 14px;cursor:pointer}
 .modal .mf .go{background:#1a73e8;color:#fff}.modal .mf .no{background:#eef2f8;color:#33425c}
+/* Prompts tab: quick-reference card (same idea as the ICU board's Prompts tab) */
+.pc-bar{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+.pc-bar b{font-size:14px;color:#0f5132}
+.pc-bar button{font:inherit;font-size:12px;font-weight:700;border-radius:6px;padding:7px 12px;cursor:pointer;background:#eef2f8;color:#33425c;border:1px solid #cfd8e6}
+.pc-bar button.go{background:#1f6f3f;color:#fff;border-color:#1f6f3f}
+.pc{font-size:12px;line-height:1.45;color:#1f2937}
+.pc-hdr{background:#d6ecdd;border:1px solid #a5cdb3;border-radius:8px;padding:10px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.pc-hdr h1{font-size:17px;font-weight:700;color:#0f5132;margin:0}
+.pc-hdr .sub{font-size:11px;color:#1f6f3f;text-align:right}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+.pc-span{grid-column:1 / -1}
+.pc-card{background:#fff;border:1px solid #c3dccb;border-radius:8px;padding:12px 14px}
+.pc-card h2{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:#0f5132;border-bottom:2px solid #d6ecdd;padding-bottom:5px;margin:0 0 9px;font-weight:700}
+.pc-step{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
+.pc-num{background:#1f6f3f;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.pc-txt{font-size:12px;color:#374151}
+.pc-txt strong,.pc-d strong{color:#0f5132}
+.pc-flow{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:7px 10px;font-family:Consolas,Monaco,monospace;font-size:11px;color:#374151;line-height:1.6;margin:2px 0 8px 26px}
+.pc-flow .c{color:#8a96a3}
+.pc-note{background:#fffbeb;border-left:3px solid #f59e0b;padding:6px 9px;font-size:11px;color:#78350f;border-radius:3px;margin-top:8px}
+.pc-note strong{color:#92400e}
+.pc table{width:100%;border-collapse:collapse;font-size:11.5px}
+.pc th{background:#e3f1e7;color:#0f5132;padding:4px 7px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.3px}
+.pc td{padding:6px 7px;border-bottom:1px solid #eef4f0;vertical-align:top}
+.pc tr:last-child td{border:none}
+.pc tr.grp td{background:#f3f9f5;color:#0f5132;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:3px 7px;border-bottom:1px solid #d6ecdd}
+.pc-trig{display:inline-block;color:#fff;padding:2px 8px;border:0;border-radius:4px;font-family:Consolas,Monaco,monospace;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer}
+.pc-trig.b{background:#1e40af}.pc-trig.g{background:#1f6f3f}.pc-trig.o{background:#c2620f}.pc-trig.gr{background:#6b7280}
+.pc-d{font-size:11px;color:#41505f}
+.pc code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:3px;padding:0 3px;font-family:Consolas,Monaco,monospace;font-size:10.5px;color:#0f5132}
+.pc-foot{margin-top:12px;background:#fff;border:1px solid #c3dccb;border-radius:8px;padding:8px 14px;font-size:11px;color:#374151;display:flex;gap:6px 18px;flex-wrap:wrap}
+.pc-foot b{color:#0f5132}
+#promptspanel:fullscreen{background:#eef5f0;padding:18px;overflow:auto}
+@media (max-width:720px){.pc-grid{grid-template-columns:1fr}}
 /* PRINT: show only the SCM output pane */
 @page{size:A4 portrait;margin:16mm 14mm 14mm 14mm}
 @media print{
@@ -425,49 +459,95 @@ function paintTabs(){
     b.style.borderColor= on?'#1f6f3f':'#c3ccd6';
   });
 }
-var PROMPTS=[
-  ['— On the phone, at the visit —',''],
-  ['start shift: DD Mon YYYY',
-   'Opens the day\u2019s CAPTURE chat. One chat for the whole day. Locks Claude to capture only \u2014 it will not write a note, name an etiology, read an ABPI or suggest a dressing, and will not offer to. Aliases: start visits: / start captures:'],
-  ['patient 2 \u2014 what you saw',
-   'Inside a capture chat, just add the photos and say which patient. Back comes a tidy de-identified FIELD CAPTURE block to carry to the PC.'],
-  ['end shift:',
-   'Lists the day\u2019s captures back (patient, age/sex, site) so you can check nothing was missed before you leave.'],
-  ['— At the desk, one chat per patient —',''],
-  ['lla 1:',
-   'LOWER LIMB ASSESSMENT \u2014 the write-up. Paste the capture block + any de-identified SCM labs/notes. Emits the wound JSON you paste into this page. Aliases: lla patient 1: / lla pt 1:'],
-  ['lla 1 update:',
-   'Follow-up visit for the same patient, in the same chat. Carries forward what has not changed and states the trajectory against last visit.'],
-  ['wound 1:',
-   'A wound that is NOT a lower limb \u2014 pressure injury, skin tear, surgical, moisture-associated. Same JSON, no limb block unless relevant.'],
-  ['mode: writeup',
-   'The only thing that lifts the capture lock, if you ever want the write-up done in the capture chat itself. Normally you will not need it.'],
-  ['— In this page —',''],
-  ['Patient 1\u20135',
-   'Five slots you can flip between during a session. Each keeps its own form and note. They live in memory \u2014 closing the tab clears them. Saved notes go to History.'],
-  ['\ud83d\udd58 History',
-   'Every note you generate is kept here. Open one to reload it. Syncs between your computers once Sync is on.'],
-  ['Sync',
-   'Enter the SAME passphrase on each computer to share history. Off by default \u2014 nothing leaves this PC until you set one.']
-];
+/* Prompts card. Triggers here must match the trigger contract in 2_WoundCare-Project-Instructions.md. */
+function pcTrig(t,cls){
+  return '<button class="pc-trig '+cls+'" title="Click to copy" onclick="copyPrompt(this,\''+esc(t).replace(/'/g,"\\'")+'\')">'+esc(t)+'</button>';
+}
+function pcStep(n,html){ return '<div class="pc-step"><div class="pc-num">'+n+'</div><div class="pc-txt">'+html+'</div></div>'; }
+function pcRow(sit,sub,trig,cls,extra){
+  return '<tr><td class="pc-d"><strong>'+sit+'</strong>'+(sub?'<br>'+sub:'')+'</td><td>'+pcTrig(trig,cls)+
+    (extra?'<div class="pc-d" style="margin-top:3px">'+extra+'</div>':'')+'</td></tr>';
+}
+function promptsCard(){
+  return '<div class="pc">'+
+  '<div class="pc-hdr"><h1>Wound Care Prompts \u2014 Quick Reference</h1>'+
+    '<div class="sub">Trigger at the start of the message \u00b7 colon mandatory<br>Type them in the <b>Wound Care</b> project in Claude</div></div>'+
+  '<div class="pc-grid">'+
+
+  '<div class="pc-card"><h2>\ud83d\udcf1 Phone \u2014 at the visit (capture only)</h2>'+
+    pcStep(1,'<strong>Cover the identifier block</strong> before any photo \u2014 the top of the working sheet and the label box on every SHA 0157 page.')+
+    pcStep(2,'<strong>One chat for the whole day.</strong> Title it <code>DD Mon YYYY \u2014 Captures</code> and start with:')+
+    '<div class="pc-flow">'+pcTrig('start shift: DD Mon YYYY','b')+'</div>'+
+    pcStep(3,'At each visit add the photos and say which patient:')+
+    '<div class="pc-flow">patient 2 \u2014 what you saw<br><span class="c">&lt;SHA 0157 pages \u00b7 working sheet \u00b7 wound photo \u00b7 med list&gt;</span></div>'+
+    pcStep(4,'Back comes a de-identified <strong>FIELD CAPTURE</strong> block for each patient.')+
+    pcStep(5,'Before you leave, check nothing was missed:')+
+    '<div class="pc-flow">'+pcTrig('end shift:','b')+'</div>'+
+    '<div class="pc-note"><strong>\ud83d\udd12 Capture only.</strong> This chat will not write a note, name an etiology, read an ABPI or suggest a dressing, and will not offer to. That waits for the desk.</div>'+
+  '</div>'+
+
+  '<div class="pc-card"><h2>\ud83d\udda5 Desk \u2014 one chat per patient</h2>'+
+    pcStep(1,'New chat per patient, titled <code>DD Mon YYYY \u2014 LLA 1</code>.')+
+    pcStep(2,'Type the trigger, then paste that patient\u2019s capture block:')+
+    '<div class="pc-flow">'+pcTrig('lla 1:','g')+'<br><span class="c">&lt;paste the FIELD CAPTURE block&gt;<br>&lt;de-identified SCM labs / notes, if any&gt;</span></div>'+
+    pcStep(3,'Claude replies with the <strong>wound JSON</strong>. Copy it.')+
+    pcStep(4,'Paste it into the <strong>Note</strong> tab here, check the form, then <strong>Generate Wound Note</strong>.')+
+    pcStep(5,'Copy the plain text into <strong>SCM / Procura</strong>. Review, edit and sign.')+
+    '<div class="pc-note"><strong>Compression is gated on ABPI.</strong> Unknown or not done \u2192 the note says HELD. Bands are those printed on SHA 0157 p.4.</div>'+
+  '</div>'+
+
+  '<div class="pc-card pc-span"><h2>All triggers \u2014 click one to copy</h2><table>'+
+    '<tr><th style="width:38%">Situation</th><th>Prompt</th></tr>'+
+    '<tr class="grp"><td colspan="2">Phone \u2014 capture chat</td></tr>'+
+    pcRow('Start the day\u2019s capture chat','one chat for the whole day','start shift: DD Mon YYYY','b','also: <code>start new shift:</code> <code>start visits:</code> <code>start new visits:</code> <code>start captures:</code>')+
+    pcRow('List the day\u2019s captures','patient \u00b7 age/sex \u00b7 site','end shift:','b','also: <code>end visits:</code>')+
+    '<tr class="grp"><td colspan="2">Desk \u2014 the write-up</td></tr>'+
+    pcRow('Lower limb assessment','capture block + de-identified SCM results \u2192 wound JSON','lla 1:','g','also: <code>lla patient 1:</code> <code>lla pt 1:</code> \u00b7 next patient <code>lla 2:</code>')+
+    pcRow('Follow-up visit, same patient','same chat \u00b7 carries forward what has not changed, states the trajectory','lla 1 update:','o','')+
+    pcRow('Wound that is not a lower limb','pressure injury \u00b7 skin tear \u00b7 surgical \u00b7 moisture-associated','wound 1:','g','')+
+    '<tr class="grp"><td colspan="2">Rarely needed</td></tr>'+
+    pcRow('Lift the capture lock','only if you want the write-up done inside the capture chat','mode: writeup','gr','')+
+  '</table>'+
+  '<div class="pc-d" style="margin-top:8px">The number is only a label for the day\u2019s visits (first visit <code>1</code>, next <code>2</code>). It restarts each day and is never a chart or client number.</div>'+
+  '</div>'+
+
+  '<div class="pc-card pc-span"><h2>In this page</h2><table>'+
+    '<tr><td class="pc-d" style="width:22%"><strong>Patient 1\u20135</strong></td><td class="pc-d">Five slots to flip between in a session. Each keeps its own form and note. Closing the tab clears them; saved notes go to History.</td></tr>'+
+    '<tr><td class="pc-d"><strong>\ud83d\udd58 History</strong></td><td class="pc-d">Every note you generate is kept here. Open one to reload it.</td></tr>'+
+    '<tr><td class="pc-d"><strong>Sync</strong></td><td class="pc-d">Off by default. Enter the SAME passphrase on each computer to share history.</td></tr>'+
+  '</table></div>'+
+
+  '</div>'+
+  '<div class="pc-foot">'+
+    '<span><b>Privacy:</b> Age \u00b7 Sex \u00b7 relevant history only \u2014 never a name, HSN/MRN, DOB, address or MRP.</span>'+
+    '<span><b>Blank or unreadable</b> \u2192 left out, never an invented measurement.</span>'+
+    '<span><b>SHA 0157 (12/23) governs.</b></span>'+
+  '</div></div>';
+}
 function promptsPanel(){
-  var rows=PROMPTS.map(function(p){
-    if(!p[1]) return '<tr><td colspan="3" style="padding:14px 8px 4px;font-size:10px;font-weight:700;'+
-      'letter-spacing:.08em;color:#5c6b7a;text-transform:uppercase">'+esc(p[0].replace(/^—\s*|\s*—$/g,''))+'</td></tr>';
-    return '<tr style="border-top:1px solid #e9eef4">'+
-      '<td style="padding:9px 8px;white-space:nowrap;vertical-align:top">'+
-        '<code style="background:#eef3f8;border:1px solid #dde4ec;border-radius:4px;padding:2px 6px;font-size:12px">'+esc(p[0])+'</code></td>'+
-      '<td style="padding:9px 8px;color:#41505f;font-size:12.5px;line-height:1.5">'+esc(p[1])+'</td>'+
-      '<td style="padding:9px 8px;text-align:right;vertical-align:top">'+
-        '<button onclick="copyPrompt(this,\''+esc(p[0]).replace(/'/g,"\\'")+'\')" '+
-        'style="padding:4px 9px;border-radius:4px;border:1px solid #c3ccd6;background:#fff;color:#5c6b7a;'+
-        'font-size:11px;cursor:pointer;font-family:inherit">Copy</button></td></tr>';
-  }).join('');
-  return '<div style="background:#fff;border:1px solid #dde4ec;border-radius:8px;padding:16px 14px">'+
-    '<b style="font-size:14px">Prompts / triggers</b>'+
-    '<p style="margin:6px 0 4px;font-size:12px;color:#5c6b7a">Type these into the <b>Wound Care</b> project in Claude. '+
-    'The phone chat is capture-only by design \u2014 recommendations wait until you are at the desk with the ABPI page and the guideline cards.</p>'+
-    '<table style="width:100%;border-collapse:collapse;margin-top:8px">'+rows+'</table></div>';
+  return '<div class="pc-bar"><b>Prompts / triggers</b><span style="flex:1"></span>'+
+    '<button onclick="promptsFullscreen()" title="Full-screen the card (Esc exits)">\ud83d\udda5 Fullscreen</button>'+
+    '<button class="go" onclick="promptsPrint()">\ud83d\udda8 Print / Save PDF</button></div>'+promptsCard();
+}
+function promptsFullscreen(){
+  var p=document.getElementById('promptspanel'); if(!p)return;
+  try{ if(p.requestFullscreen)p.requestFullscreen(); else if(p.webkitRequestFullscreen)p.webkitRequestFullscreen(); }catch(e){}
+}
+/* Prints the card alone, from a throwaway iframe, so the page's own print rules (SCM note only) stay untouched. */
+function promptsPrint(){
+  var old=document.getElementById('pcprint'); if(old)old.parentNode.removeChild(old);
+  var css=''; var st=document.getElementsByTagName('style');
+  for(var i=0;i<st.length;i++)css+=st[i].textContent;
+  css=css.split('/* PRINT: show only the SCM output pane */')[0];
+  var f=document.createElement('iframe'); f.id='pcprint';
+  f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  f.onload=function(){ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){} };
+  f.srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Wound Care Prompts</title><style>'+css+
+    '@page{size:letter;margin:11mm}body{background:#fff;padding:0;margin:0;max-width:none;font-family:-apple-system,"Segoe UI",Roboto,sans-serif}'+
+    '.pc-card,.pc-foot{break-inside:avoid}.pc-trig{-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '.pc-hdr,.pc th,.pc tr.grp td,.pc-num,.pc-note,.pc-flow{-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    '</style></head><body>'+promptsCard()+'</body></html>';
+  document.body.appendChild(f);
 }
 function copyPrompt(btn,txt){
   var done=function(){var o=btn.textContent;btn.textContent='\u2713';setTimeout(function(){btn.textContent=o;},1200);};
